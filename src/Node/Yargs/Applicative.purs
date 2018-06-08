@@ -9,7 +9,7 @@ module Node.Yargs.Applicative
   ) where
 
 import Prelude
-import Control.Alt ((<|>))
+import Control.Alt (class Alt, (<|>))
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE)
 import Control.Monad.Eff.Exception (EXCEPTION, error, throwException)
@@ -45,6 +45,11 @@ instance applyT :: Apply Y where
 
 instance applicativeY :: Applicative Y where
   pure a = Y { setup: mempty, read: \_ -> pure a }
+
+instance altY :: Alt Y where
+  alt (Y o1) (Y o2) = Y { setup: o1.setup <> o2.setup
+                        , read: \value -> o1.read value <|> o2.read value
+                        }
 
 -- | Compute some `Eff` action using command-line arguments, and run it.
 -- |
