@@ -1,5 +1,5 @@
 module Node.Yargs.Applicative
-  ( Y
+  ( Y(..)
   , runY
   , class Arg
   , arg
