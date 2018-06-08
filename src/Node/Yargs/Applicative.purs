@@ -16,9 +16,9 @@ import Control.Monad.Eff.Exception (EXCEPTION, error, throwException)
 import Control.Monad.Except (runExcept)
 import Data.Either (Either(Left, Right))
 import Data.Foldable (foldMap)
-import Data.Foreign (F, Foreign, readArray, readBoolean, readInt, readNumber, readString)
+import Data.Foreign (F, Foreign, isNull, isUndefined, readArray, readBoolean, readInt, readNumber, readString)
 import Data.Foreign.Index (readProp)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..))
 import Data.Monoid (mempty)
 import Data.Traversable (traverse)
 import Node.Yargs (runYargs)
@@ -87,6 +87,17 @@ readOneOrMany f key value = do
   value' <- readProp key value
   pure <$> f value'
        <|> (readArray value' >>= traverse f)
+
+instance maybeString :: Arg (Maybe String) where
+  arg key = Y { setup: string key
+              , read: readMaybe readString key
+              }
+
+readMaybe :: forall a. (Foreign -> F a) -> String -> Foreign -> F (Maybe a)
+readMaybe f key value = do
+  value' <- readProp key value
+
+  if isNull value' || isUndefined value' then pure Nothing else pure <$> f value'
 
 instance argStrings :: Arg (Array String) where
   arg key = Y { setup: string key

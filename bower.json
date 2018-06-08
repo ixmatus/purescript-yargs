@@ -26,6 +26,7 @@
     "purescript-foreign": "^4.0.0",
     "purescript-either": "^3.0.0",
     "purescript-console": "^3.0.0",
-    "purescript-exceptions": "^3.0.0"
+    "purescript-exceptions": "^3.0.0",
+    "purescript-maybe": "^3.0.0"
   }
 }
